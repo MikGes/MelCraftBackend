@@ -7,7 +7,8 @@ export const UsersSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     },
     password: {
         type: String,
@@ -22,7 +23,7 @@ export const UsersSchema = new mongoose.Schema({
     },
     ratings: [
         {
-            rated_post_id: {
+            rated_furniture_id: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'furniture',
                 required: true,
