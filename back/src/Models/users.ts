@@ -8,7 +8,7 @@ export const UsersSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique:true
+        unique: true
     },
     password: {
         type: String,
@@ -47,9 +47,16 @@ export const UsersSchema = new mongoose.Schema({
         },
         {
             ordered_furniture_id: {
-                type:mongoose.Schema.Types.ObjectId,
-                ref:"furniture"
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "furniture"
             }
         }
-    ]
+    ],
+    verification_token: {
+        type: String,
+    },
+    role: {
+        type: String,
+        default: "customer"
+    }
 })
