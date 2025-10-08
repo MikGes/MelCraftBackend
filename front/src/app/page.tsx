@@ -16,6 +16,7 @@ interface Product {
   image: string;
 }
 
+
 // Product data
 const furnitureProducts: Product[] = [
   {
@@ -140,13 +141,25 @@ interface ContactForm {
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [contactForm, setContactForm] = useState<ContactForm>({ name: '', phone: '' });
   const [formErrors, setFormErrors] = useState<Partial<ContactForm>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [furnitures, setFurniture] = useState([])
 
   useEffect(() => {
+    async function getFurniture() {
+      const raw = await fetch("http://localhost:4000/users/furnitures")
+      const result = await raw.json()
+      if (result.success) {
+        setFurniture(result.data)
+      }
+      else {
+        console.log("Problem!")
+      }
+    }
+    getFurniture()
     const handleScroll = () => {
       const sections = ['home', 'products', 'services', 'about', 'contact'];
       const scrollPosition = window.scrollY + 100;
@@ -407,20 +420,29 @@ export default function HomePage() {
                 <h3 className="text-2xl font-bold text-amber-900">Furniture Collection</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {furnitureProducts.map((product) => (
-                  <div key={product.id} className="bg-amber-50 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300">
-                    <div className="h-48 bg-amber-200 flex items-center justify-center">
-                      <div className="bg-amber-300 w-32 h-32 rounded-lg flex items-center justify-center">
-                        <span className="text-amber-800 font-bold">{product.name.split(' ')[0]}</span>
-                      </div>
-                    </div>
+                {furnitures.map((product: any) => (
+                  <div
+  key={product._id}
+  className="bg-gradient-to-r from-amber-100 to-amber-300 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 animate-pulse"
+>
+  <p className="bg-green-500 text-white text-center font-semibold py-2 animate-marquee">
+    {product.special_description}
+  </p>
+
+  <div className="h-48 bg-amber-200 flex items-center justify-center">
+    <div className="bg-amber-300 w-32 h-32 rounded-lg flex items-center justify-center">
+      <span className="text-amber-800 font-bold text-lg">
+        {product.furniture_name.split(' ')[0]}
+      </span>
+    </div>
+  </div>
                     <div className="p-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-bold text-lg text-amber-900">{product.name}</h4>
-                          <p className="text-amber-700 text-sm mt-1">{product.category}</p>
+                          <h4 className="font-bold text-lg text-amber-900">{product.furniture_name}</h4>
+                          <p className="text-amber-700 text-sm mt-1">{product.furniture_type}</p>
                         </div>
-                        <span className="font-bold text-amber-800">{product.price}</span>
+                        <span className="font-bold text-amber-800">{product.furniture_price}</span>
                       </div>
                       <button
                         onClick={() => openProductModal(product)}
@@ -769,7 +791,7 @@ export default function HomePage() {
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-amber-200 flex justify-between items-center p-6">
-              <h2 className="text-2xl font-bold text-amber-900">{selectedProduct.name}</h2>
+              <h2 className="text-2xl font-bold text-amber-900">{selectedProduct.furniture_name}</h2>
               <button
                 onClick={closeProductModal}
                 className="text-amber-700 hover:text-amber-900"
@@ -785,7 +807,7 @@ export default function HomePage() {
                 <div className="md:w-1/2">
                   <div className="bg-amber-200 border-2 border-amber-300 rounded-xl w-full h-80 flex items-center justify-center">
                     <div className="bg-amber-300 w-48 h-48 rounded-lg flex items-center justify-center">
-                      <span className="text-amber-800 font-bold text-2xl">{selectedProduct.name.split(' ')[0]}</span>
+                      <span className="text-amber-800 font-bold text-2xl">{selectedProduct.furniture_name.split(' ')[0]}</span>
                     </div>
                   </div>
                   <div className="mt-4 flex space-x-2">
@@ -800,15 +822,15 @@ export default function HomePage() {
                 {/* Product Details */}
                 <div className="md:w-1/2">
                   <div className="mb-6">
-                    <span className="text-amber-700 font-medium">{selectedProduct.category}</span>
-                    <h3 className="text-3xl font-bold text-amber-900 mt-2">{selectedProduct.price}</h3>
+                    <span className="text-amber-700 font-medium">{selectedProduct.furniture_type}</span>
+                    <h3 className="text-3xl font-bold text-amber-900 mt-2">{selectedProduct.furniture_price} Birr</h3>
                   </div>
 
                   <p className="text-amber-800 mb-6">
-                    {selectedProduct.description}
+                    {selectedProduct.furniture_description}
                   </p>
 
-                  <div className="mb-8">
+                  {/* <div className="mb-8">
                     <h4 className="font-bold text-amber-900 text-lg mb-3">Key Features</h4>
                     <ul className="space-y-2">
                       {selectedProduct.features.map((feature, index) => (
@@ -818,7 +840,7 @@ export default function HomePage() {
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  </div> */}
 
                   {/* Contact Request Form */}
                   <div className="bg-amber-50 p-6 rounded-xl border border-amber-200">
@@ -831,7 +853,7 @@ export default function HomePage() {
                           </svg>
                         </div>
                         <p className="text-amber-800 font-medium">Thank you!</p>
-                        <p className="text-amber-700 mt-2">We'll contact you shortly about {selectedProduct.name}.</p>
+                        <p className="text-amber-700 mt-2">We'll contact you shortly about {selectedProduct.furniture_name}.</p>
                         <button
                           onClick={closeProductModal}
                           className="mt-4 bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-lg font-medium"

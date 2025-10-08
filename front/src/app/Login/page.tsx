@@ -25,11 +25,11 @@ export default function LoginPage() {
             newErrors.email = 'Email is invalid';
         }
 
-        if (!password) {
-            newErrors.password = 'Password is required';
-        } else if (password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
-        }
+        // if (!password) {
+        //     newErrors.password = 'Password is required';
+        // } else if (password.length < 6) {
+        //     newErrors.password = 'Password must be at least 6 characters';
+        // }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -41,10 +41,23 @@ export default function LoginPage() {
 
         setIsLoading(true);
         try {
-            // Simulate API call - replace with your auth logic
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            // router.push('/dashboard'); // Uncomment when implementing auth
-            alert('Login successful!'); // Temporary success indicator
+            const result = await fetch("http://localhost:4000/users/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            const resultJson = await result.json()
+            if (resultJson.success){
+                localStorage.setItem(
+                    "accessToken",resultJson.access_token
+                )
+                router.push("/Dashboard")
+            }
+            else{
+                setErrors({ ...errors, email: 'Invalid credentials' });
+            }
         } catch (error) {
             console.error('Login error:', error);
             setErrors({ ...errors, email: 'Invalid credentials' });
