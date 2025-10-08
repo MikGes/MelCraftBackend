@@ -422,20 +422,20 @@ export default function HomePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {furnitures.map((product: any) => (
                   <div
-  key={product._id}
-  className="bg-gradient-to-r from-amber-100 to-amber-300 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 animate-pulse"
->
-  <p className="bg-green-500 text-white text-center font-semibold py-2 animate-marquee">
-    {product.special_description}
-  </p>
+                    key={product._id}
+                    className="bg-gradient-to-r from-amber-100 to-amber-300 rounded-xl overflow-hidden shadow-md hover:shadow-lg"
+                  >
+                    <p className="bg-green-500 text-white text-center font-semibold py-2 animate-marquee">
+                      {product.special_description}
+                    </p>
 
-  <div className="h-48 bg-amber-200 flex items-center justify-center">
-    <div className="bg-amber-300 w-32 h-32 rounded-lg flex items-center justify-center">
-      <span className="text-amber-800 font-bold text-lg">
-        {product.furniture_name.split(' ')[0]}
-      </span>
-    </div>
-  </div>
+                    <div className="h-48 bg-amber-200 flex items-center justify-center">
+                      <div className="bg-amber-300 w-32 h-32 rounded-lg flex items-center justify-center">
+                        <span className="text-amber-800 font-bold text-lg">
+                          {product.furniture_name.split(' ')[0]}
+                        </span>
+                      </div>
+                    </div>
                     <div className="p-6">
                       <div className="flex justify-between items-start">
                         <div>
@@ -748,6 +748,27 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        <div className="max-w-md mx-auto p-6">
+          {/* Italicized Headline */}
+          <p className="text-amber-800 italic text-center text-lg mb-4 font-light">
+           Stay inspired: Receive the latest in furniture design and interior styling, delivered to your inbox.
+          </p>
+
+          {/* Email Input + Button */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="email"
+              placeholder="Your email address"
+              className="flex-1 px-4 py-3 rounded-lg border border-amber-300 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-amber-400 text-amber-900"
+            />
+            <button
+              type="button"
+              className="px-6 py-3 bg-amber-700 hover:bg-amber-800 text-white font-medium rounded-lg transition-all duration-300 shadow-md hover:shadow-[0_0_12px_#b45309] whitespace-nowrap"
+            >
+              Subscribe
+            </button>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
@@ -921,9 +942,13 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
+
           </div>
+
         </div>
+
       )}
+
     </div>
   );
 }
