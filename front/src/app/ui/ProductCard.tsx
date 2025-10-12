@@ -10,9 +10,8 @@ interface ProductCardProps {
 export default function ProductCard({ product, isInterior = false, onViewDetails }: ProductCardProps) {
   return (
     <div
-      className={`rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 ${
-        isInterior ? 'bg-amber-50' : 'bg-gradient-to-r from-amber-100 to-amber-300'
-      }`}
+      className={`rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 ${isInterior ? 'bg-amber-50' : 'bg-gradient-to-r from-amber-100 to-amber-300'
+        }`}
     >
       {!isInterior && product.special_description && (
         <p className="bg-green-500 text-white text-center font-semibold py-2 animate-marquee">

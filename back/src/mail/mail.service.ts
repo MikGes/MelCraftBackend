@@ -7,7 +7,7 @@ export class MailService {
         service: 'gmail',
 
         tls: {
-            rejectUnauthorized: false // <-- This allows self-signed certs
+            rejectUnauthorized: false
         }
         ,
         auth: {
