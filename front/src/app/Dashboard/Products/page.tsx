@@ -29,7 +29,63 @@ export default function ProductsPage() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const handleSubmit = async (e:any) => {
+        e.preventDefault();
 
+        const formData = new FormData(e.currentTarget);
+
+        const name = formData.get('addName');
+        const category = formData.get('addCategory');
+        const price = formData.get('addPrice');
+        const specialDescription = formData.get('addSpecialDescription');
+        const description = formData.get('addDescription');
+
+        // Basic validation
+        if (!name || !category || !price) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        // Clean price (remove $, commas, etc.)
+        const cleanPrice = parseFloat(price.toString().replace(/[^\d.-]/g, ''));
+        if (isNaN(cleanPrice)) {
+            alert('Please enter a valid price.');
+            return;
+        }
+
+        const payload = {
+            furniture_name: name,
+            furniture_type: category,
+            furniture_price: cleanPrice,
+            special_description: specialDescription?.toString().trim() || '',
+            furniture_description: description?.toString().trim() || '',
+        };
+        setIsSubmitting(true);
+
+        try {
+            const res = await fetch('http://localhost:4000/admin/createFurniture', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (res.ok) {
+                alert('Product created successfully!');
+                closeModals();
+            } else {
+                const errorData = await res.json();
+                alert('Failed to create product: ' + (errorData.message || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            alert('Network error. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     const openAddModal = () => {
         setIsAddModalOpen(true);
         document.body.style.overflow = 'hidden';
@@ -100,8 +156,8 @@ export default function ProductsPage() {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.status === 'active'
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-red-100 text-red-800'
                                         }`}>
                                         {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
                                     </span>
@@ -140,7 +196,7 @@ export default function ProductsPage() {
                         </div>
 
                         <div className="p-6">
-                            <form className="space-y-6">
+                            <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label htmlFor="addName" className="block text-amber-800 font-medium mb-2">
@@ -149,6 +205,7 @@ export default function ProductsPage() {
                                         <input
                                             type="text"
                                             id="addName"
+                                            name="addName"
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                             placeholder="Enter product name"
                                         />
@@ -160,6 +217,7 @@ export default function ProductsPage() {
                                         </label>
                                         <select
                                             id="addCategory"
+                                            name="addCategory"
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         >
                                             <option>Living Room</option>
@@ -179,22 +237,23 @@ export default function ProductsPage() {
                                         <input
                                             type="text"
                                             id="addPrice"
+                                            name='addPrice'
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                             placeholder="$0.00"
                                         />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="addStatus" className="block text-amber-800 font-medium mb-2">
-                                            Status
+                                        <label htmlFor="addSpecialDescription" className="block text-amber-800 font-medium mb-2">
+                                            Special Description
                                         </label>
-                                        <select
-                                            id="addStatus"
+                                        <textarea
+                                            id="addSpecialDescription"
+                                            rows={2}
+                                            name='addSpecialDescription'
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                                        >
-                                            <option>Active</option>
-                                            <option>Inactive</option>
-                                        </select>
+                                            placeholder="Enter your S.Description"
+                                        ></textarea>
                                     </div>
                                 </div>
 
@@ -205,6 +264,7 @@ export default function ProductsPage() {
                                     <textarea
                                         id="addDescription"
                                         rows={4}
+                                        name='addDescription'
                                         className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         placeholder="Enter product description"
                                     ></textarea>
@@ -232,9 +292,10 @@ export default function ProductsPage() {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-6 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-lg font-medium"
+                                        disabled={isSubmitting}
+                                        className="px-6 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-lg font-medium disabled:opacity-70"
                                     >
-                                        Add Product
+                                        {isSubmitting ? 'Adding...' : 'Add Product'}
                                     </button>
                                 </div>
                             </form>

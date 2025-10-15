@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaEnvelope, FaLock } from 'react-icons/fa';
+import {  FaLock, FaUser } from 'react-icons/fa';
 
 interface FormErrors {
-    email?: string;
+    username?: string;
     password?: string;
 }
 
 export default function LoginPage() {
-    const [email, setEmail] = useState<string>('');
+    const [username, setusername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [errors, setErrors] = useState<FormErrors>({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -19,10 +19,8 @@ export default function LoginPage() {
     const validate = (): boolean => {
         const newErrors: FormErrors = {};
 
-        if (!email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-            newErrors.email = 'Email is invalid';
+        if (!username.trim()) {
+            newErrors.username = 'username is required';
         }
 
         // if (!password) {
@@ -41,12 +39,12 @@ export default function LoginPage() {
 
         setIsLoading(true);
         try {
-            const result = await fetch("http://localhost:4000/users/login", {
+            const result = await fetch("http://localhost:4000/admin/login", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ username, password })
             })
             const resultJson = await result.json()
             if (resultJson.success){
@@ -56,11 +54,11 @@ export default function LoginPage() {
                 router.push("/Dashboard")
             }
             else{
-                setErrors({ ...errors, email: 'Invalid credentials' });
+                setErrors({ ...errors, username: 'Invalid credentials' });
             }
         } catch (error) {
             console.error('Login error:', error);
-            setErrors({ ...errors, email: 'Invalid credentials' });
+            setErrors({ ...errors, username: 'Invalid credentials' });
         } finally {
             setIsLoading(false);
         }
@@ -83,29 +81,29 @@ export default function LoginPage() {
                         <p className="text-amber-700 text-center mb-8">Sign in to your account</p>
 
                         <form onSubmit={handleSubmit}>
-                            {/* Email Field */}
+                            {/* username Field */}
                             <div className="mb-6">
-                                <label htmlFor="email" className="block text-amber-800 font-medium mb-2">
-                                    Email Address
+                                <label htmlFor="username" className="block text-amber-800 font-medium mb-2">
+                                    Username
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <FaEnvelope className="text-amber-600" />
+                                        <FaUser className="text-amber-600" />
                                     </div>
                                     <input
-                                        id="email"
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-amber-300'
+                                        id="username"
+                                        type="text"
+                                        value={username}
+                                        onChange={(e) => setusername(e.target.value)}
+                                        className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.username ? 'border-red-500' : 'border-amber-300'
                                             } bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent`}
-                                        placeholder="you@example.com"
-                                        aria-invalid={!!errors.email}
-                                        aria-describedby={errors.email ? "email-error" : undefined}
+                                        placeholder="Username"
+                                        aria-invalid={!!errors.username}
+                                        aria-describedby={errors.username ? "username-error" : undefined}
                                     />
                                 </div>
-                                {errors.email && (
-                                    <p id="email-error" className="mt-1 text-red-500 text-sm">{errors.email}</p>
+                                {errors.username && (
+                                    <p id="username-error" className="mt-1 text-red-500 text-sm">{errors.username}</p>
                                 )}
                             </div>
 

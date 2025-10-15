@@ -4,9 +4,10 @@ import { AdminController } from './admin.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FurnitureSchema } from 'src/Models/furniture';
 import { UsersSchema } from 'src/Models/users';
+import { AdminsSchema } from 'src/Models/admins';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:'furniture', schema:FurnitureSchema},{name:'users',schema:UsersSchema}])],
+  imports:[MongooseModule.forFeature([{name:'furniture', schema:FurnitureSchema},{name:'users',schema:UsersSchema},{name:'admins',schema:AdminsSchema}])],
   providers: [AdminService],
   controllers: [AdminController]
 })
