@@ -42,14 +42,15 @@ export class UserService {
     }
     async VerifyEmail(res, verificationToken) {
         try {
-            const target = await this.usersTable.findOne({ where: { token: verificationToken } });
-
+            const target = await this.usersTable.findOne({ verification_token: verificationToken });
+            console.log(target)
+            console.log(verificationToken)
             if (target) {
                 target.email_verified = true;
                 target.verification_token = ""
-                await this.usersTable.save(target);
+                await target.save();
                 return res.status(200).json({
-                    message: "Your Email Is Verified Successfully!",
+                    message: "Your Email Is Verified Successfully! You may now request products!",
                     success: true
                 })
             }
@@ -61,7 +62,8 @@ export class UserService {
         } catch (error) {
             return res.status(500).json({
                 message: "Can't Verify Your Email, Please Try Again!",
-                success: true
+                error: error.message,
+                success: false
             })
         }
 
@@ -107,9 +109,8 @@ export class UserService {
     }
     async OrderFurniture(res, furnitureId, customer) {
         try {
-
-            const updatedUser = await this.usersTable.findByIdAndUpdate(
-                customer._id,
+            const updatedUser = await this.usersTable.findOneAndUpdate(
+                { email: customer.email },
                 {
                     $addToSet: {
                         orders: {
@@ -120,22 +121,39 @@ export class UserService {
                 { new: true }
             );
 
-            if (!updatedUser) {
-                return res.status(404).json({ message: "User not found" });
+            // Check if user exists and is verified
+            if (!updatedUser || !updatedUser.email_verified) {
+                return res.status(404).json({
+                    message: "We couldn't process your request. Please make sure you're subscribed and your email is verified. Thank you for your interest!"
+                });
             }
-            const newRequest = await this.requests({
-                orderedBy: customer._id,
+
+            const newRequest = new this.requests({
+                orderedBy: updatedUser._id,
+                phoneNumber: customer.phone,
+                fullName: customer.fullName,
                 ordered_furniture: furnitureId
-            })
-            await newRequest.save()
+            });
+
+            await this.mailService.sendProductRequestMail({
+                email: customer.email,
+                phone: customer.phone
+            });
+
+            await newRequest.save();
+
             return res.status(200).json({
-                message: "Furniture ordered successfully",
+                message: "Your furniture order has been received successfully. We appreciate your request!",
                 success: true
             });
 
         } catch (error) {
-            console.error("Error ordering furniture:", error);
-            return res.status(500).json({ message: "Internal server error" });
+            console.error("Error while processing furniture order:", error);
+            return res.status(500).json({
+                message: "Oops! Something went wrong while processing your request. Please try again later."
+            });
         }
     }
+
+
 }

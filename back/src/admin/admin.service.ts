@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AdminService {
-    constructor(private jwtService: JwtService,@InjectModel("furniture") private readonly FurnitureTable, @InjectModel("users") private readonly UsersTable, @InjectModel("admins") private readonly AdminsTable) { }
+    constructor(private jwtService: JwtService, @InjectModel("requests") private readonly RequestsTable, @InjectModel("furniture") private readonly FurnitureTable, @InjectModel("users") private readonly UsersTable, @InjectModel("admins") private readonly AdminsTable) { }
     async createFurniture(res, furDetails) {
         try {
             await this.FurnitureTable.create(furDetails)
@@ -64,29 +64,46 @@ export class AdminService {
             })
         }
     }
-   async LoginUser(res, creds) {
-           try {
-               const target = await this.AdminsTable.findOne({ email: creds.email })
-               if (target && await bcrypt.compare(creds.password, target?.password)) {
-                   const payload = {
-                       sub: target._id,
-                       role: target.role
-                   }
-                   return res.status(200).json({
-                       access_token: await this.jwtService.signAsync(payload),
-                       message: "Your authenticated!",
-                       success: true
-                   })
-               }
-               return res.status(400).json({
-                   message: "Email or password not correct",
-                   success: false
-               })
-           } catch (error) {
-               return res.status(500).json({
-                   message: "An error occured, please try again",
-                   error: error.message
-               })
-           }
-       }
+    async LoginUser(res, creds) {
+        try {
+            const target = await this.AdminsTable.findOne({ email: creds.email })
+            if (target && await bcrypt.compare(creds.password, target?.password)) {
+                const payload = {
+                    sub: target._id,
+                    role: target.role
+                }
+                return res.status(200).json({
+                    access_token: await this.jwtService.signAsync(payload),
+                    message: "Your authenticated!",
+                    success: true
+                })
+            }
+            return res.status(400).json({
+                message: "Email or password not correct",
+                success: false
+            })
+        } catch (error) {
+            return res.status(500).json({
+                message: "An error occured, please try again",
+                error: error.message
+            })
+        }
+    }
+    async getAllRequests(res) {
+        try {
+            const furnitures = await this.RequestsTable.find()
+                .populate("orderedBy")
+                .populate("ordered_furniture");
+
+            return res.status(200).json({
+                data: furnitures,
+                success: true
+            })
+        } catch (error) {
+            return res.status(500).json({
+                message: "An error occured, please try again",
+                error: error.message
+            })
+        }
+    }
 }

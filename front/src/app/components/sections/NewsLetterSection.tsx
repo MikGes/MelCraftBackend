@@ -1,17 +1,24 @@
-"use client"; // if you're using Next.js 13+ with app directory
+"use client";
 
 import { useState } from "react";
 
 export default function NewsletterSection() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+
   const handleSubscribe = async () => {
-    if (!email) return;
+    if (!email.trim()) {
+      setMessage("Please enter a valid email address.");
+      setStatus("error");
+      return;
+    }
 
     setStatus("loading");
+    setMessage("");
 
     try {
-      const res: any = await fetch("http://localhost:4000/users/createUser", {
+      const res = await fetch("http://localhost:4000/users/createUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -19,15 +26,20 @@ export default function NewsletterSection() {
         body: JSON.stringify({ email }),
       });
 
-      if (res.ok) {
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         setStatus("success");
+        setMessage(data.message || "Thanks for subscribing! We've sent a confirmation email—please check your inbox and verify your address to complete your subscription.");
         setEmail("");
       } else {
         setStatus("error");
+        setMessage(data.message || "Something went wrong. Please try again.");
       }
     } catch (err) {
       console.error("Subscription failed:", err);
       setStatus("error");
+      setMessage("Unable to connect to the server. Please check your internet connection and try again.");
     }
   };
 
@@ -40,7 +52,13 @@ export default function NewsletterSection() {
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (status === "error") {
+              setStatus("idle");
+              setMessage("");
+            }
+          }}
           placeholder="Your email address"
           className="flex-1 px-4 py-3 rounded-lg border border-amber-300 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-amber-400 text-amber-900"
         />
@@ -54,10 +72,14 @@ export default function NewsletterSection() {
         </button>
       </div>
       {status === "success" && (
-        <p className="text-green-600 mt-2 text-sm text-center">Thanks for subscribing! We've sent a confirmation email—please check your inbox and verify your address to complete your subscription.</p>
+        <p className="text-green-600 mt-2 text-sm text-center">
+          {message}
+        </p>
       )}
       {status === "error" && (
-        <p className="text-red-600 mt-2 text-sm text-center">Something went wrong. Try again.</p>
+        <p className="text-red-600 mt-2 text-sm text-center">
+          {message}
+        </p>
       )}
     </div>
   );

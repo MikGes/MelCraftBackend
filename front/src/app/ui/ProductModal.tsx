@@ -1,9 +1,9 @@
-// components/ui/ProductModal.tsx
 'use client';
+import { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 
 interface ContactForm {
-  name: string;
+  email: string;
   phone: string;
 }
 
@@ -11,25 +11,98 @@ interface ProductModalProps {
   product: any;
   isOpen: boolean;
   onClose: () => void;
-  contactForm: ContactForm;
-  formErrors: Partial<ContactForm>;
-  isSubmitting: boolean;
-  submitSuccess: boolean;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (e: React.FormEvent) => void;
 }
 
 export default function ProductModal({
   product,
+  isOpen,
   onClose,
-  contactForm,
-  formErrors,
-  isSubmitting,
-  submitSuccess,
-  onInputChange,
-  onSubmit,
 }: ProductModalProps) {
-  if (!product) return null;
+  const [contactForm, setContactForm] = useState<ContactForm>({
+    email: '',
+    phone: '',
+  });
+  const [formErrors, setFormErrors] = useState<Partial<ContactForm>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Reset form when modal opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      setContactForm({ email: '', phone: '' });
+      setFormErrors({});
+      setSubmitSuccess(false);
+      setSubmitError(null);
+    }
+  }, [isOpen]);
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setContactForm((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user types
+    if (formErrors[name as keyof ContactForm]) {
+      setFormErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+    if (submitError) setSubmitError(null);
+  };
+
+  const validateForm = () => {
+    const errors: Partial<ContactForm> = {};
+    if (!contactForm.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactForm.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    if (!contactForm.phone.trim()) {
+      errors.phone = 'Phone number is required';
+    } else if (!/^\+?[\d\s\-()]{10,}$/.test(contactForm.phone)) {
+      errors.phone = 'Please enter a valid phone number';
+    }
+    return errors;
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch(`http://localhost:4000/users/order/${product._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: contactForm.email,
+          phone: contactForm.phone,
+          furnitureId: product._id || product.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitSuccess(true);
+      } else {
+        // Handle backend validation or logic errors
+        setSubmitError(data.message || 'Failed to submit your request. Please try again.');
+      }
+    } catch (err) {
+      console.error('Network error:', err);
+      setSubmitError('Unable to connect to the server. Please check your internet and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!product || !isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
@@ -101,23 +174,27 @@ export default function ProductModal({
                   </div>
                 ) : (
                   <form onSubmit={onSubmit}>
+                    {submitError && (
+                      <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+                        {submitError}
+                      </div>
+                    )}
                     <div className="mb-4">
-                      <label htmlFor="contactName" className="block text-amber-800 font-medium mb-2">
-                        Full Name *
+                      <label htmlFor="contactEmail" className="block text-amber-800 font-medium mb-2">
+                        Email Address *
                       </label>
                       <input
-                        type="text"
-                        id="contactName"
-                        name="name"
-                        value={contactForm.name}
+                        type="email"
+                        id="contactEmail"
+                        name="email"
+                        value={contactForm.email}
                         onChange={onInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-                          formErrors.name ? 'border-red-500' : 'border-amber-300'
-                        }`}
-                        placeholder="Enter your name"
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${formErrors.email ? 'border-red-500' : 'border-amber-300'
+                          }`}
+                        placeholder="you@example.com"
                       />
-                      {formErrors.name && (
-                        <p className="mt-1 text-red-500 text-sm">{formErrors.name}</p>
+                      {formErrors.email && (
+                        <p className="mt-1 text-red-500 text-sm">{formErrors.email}</p>
                       )}
                     </div>
                     <div className="mb-6">
@@ -130,9 +207,8 @@ export default function ProductModal({
                         name="phone"
                         value={contactForm.phone}
                         onChange={onInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-                          formErrors.phone ? 'border-red-500' : 'border-amber-300'
-                        }`}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${formErrors.phone ? 'border-red-500' : 'border-amber-300'
+                          }`}
                         placeholder="+44 1234 567890"
                       />
                       {formErrors.phone && (
@@ -142,17 +218,20 @@ export default function ProductModal({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`w-full py-3 px-4 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-medium transition duration-300 flex justify-center items-center ${
-                        isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
-                      }`}
+                      className={`w-full py-3 px-4 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-medium transition duration-300 flex justify-center items-center ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+                        }`}
                     >
                       {isSubmitting ? (
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                      ) : null}
-                      {isSubmitting ? 'Sending Request...' : 'Request Information'}
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Sending Request...
+                        </>
+                      ) : (
+                        'Request Information'
+                      )}
                     </button>
                   </form>
                 )}

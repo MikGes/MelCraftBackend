@@ -51,7 +51,7 @@ export default function Header({ activeSection, isMenuOpen, setIsMenuOpen, scrol
               Contact
             </button>
             <Link
-              href="/login"
+              href="/Login"
               className="bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg font-medium transition duration-300"
             >
               Login

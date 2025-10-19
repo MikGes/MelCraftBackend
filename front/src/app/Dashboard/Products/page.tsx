@@ -1,36 +1,49 @@
+// app/products/page.tsx
 'use client';
 
-import { useState } from 'react';
-import { FaEdit, FaTrash, FaPlus, FaTimes } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { FaEdit, FaTrash, FaPlus, FaTimes, FaCouch, FaTag, FaDollarSign } from 'react-icons/fa';
 
-// Product interface
+// Product interface matching your API
 interface Product {
-    id: number;
-    name: string;
-    category: string;
-    price: string;
-    status: 'active' | 'inactive';
+    _id: string;
+    furniture_name: string;
+    furniture_type: string;
+    furniture_price: number;
+    furniture_description: string;
+    special_description?: string;
 }
 
-// Mock product data
-const mockProducts: Product[] = [
-    { id: 1, name: 'Modern Sofa', category: 'Living Room', price: '$1,299', status: 'active' },
-    { id: 2, name: 'Dining Table Set', category: 'Dining', price: '$899', status: 'active' },
-    { id: 3, name: 'Executive Desk', category: 'Office', price: '$749', status: 'inactive' },
-    { id: 4, name: 'King Bed Frame', category: 'Bedroom', price: '$1,199', status: 'active' },
-    { id: 5, name: 'Accent Chair', category: 'Living Room', price: '$499', status: 'active' },
-    { id: 6, name: 'Bookshelf', category: 'Storage', price: '$399', status: 'active' },
-    { id: 7, name: 'Wall Art Collection', category: 'Decor', price: '$199', status: 'inactive' },
-    { id: 8, name: 'Designer Lighting', category: 'Lighting', price: '$299', status: 'active' },
-];
-
 export default function ProductsPage() {
-    const [products] = useState<Product[]>(mockProducts);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const handleSubmit = async (e:any) => {
+
+    // Fetch real products from your API
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch('http://localhost:4000/users/furnitures'); // Adjust to your endpoint
+                if (!response.ok) throw new Error('Failed to fetch products');
+                const data = await response.json();
+                setProducts(data.data || []);
+            } catch (err) {
+                console.error('Error fetching products:', err);
+                setError('Failed to load products. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    // Add Product Handler (unchanged from your original)
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
@@ -75,6 +88,10 @@ export default function ProductsPage() {
             if (res.ok) {
                 alert('Product created successfully!');
                 closeModals();
+                // Refresh products list
+                const response = await fetch('http://localhost:4000/users/furnitures');
+                const data = await response.json();
+                setProducts(data.data || []);
             } else {
                 const errorData = await res.json();
                 alert('Failed to create product: ' + (errorData.message || 'Unknown error'));
@@ -86,6 +103,7 @@ export default function ProductsPage() {
             setIsSubmitting(false);
         }
     };
+
     const openAddModal = () => {
         setIsAddModalOpen(true);
         document.body.style.overflow = 'hidden';
@@ -103,6 +121,30 @@ export default function ProductsPage() {
         setSelectedProduct(null);
         document.body.style.overflow = 'auto';
     };
+
+    if (loading) {
+        return (
+            <div className="p-6">
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-700"></div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-6">
+                <div className="bg-red-50 border-l-4 border-red-500 p-4">
+                    <div className="flex">
+                        <div className="text-red-700">
+                            <p>{error}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-6">
@@ -134,9 +176,6 @@ export default function ProductsPage() {
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase tracking-wider">
                                 Price
                             </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase tracking-wider">
-                                Status
-                            </th>
                             <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-amber-800 uppercase tracking-wider">
                                 Actions
                             </th>
@@ -144,23 +183,31 @@ export default function ProductsPage() {
                     </thead>
                     <tbody className="bg-white divide-y divide-amber-100">
                         {products.map((product) => (
-                            <tr key={product.id} className="hover:bg-amber-50">
+                            <tr key={product._id} className="hover:bg-amber-50">
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="font-medium text-amber-900">{product.name}</div>
+                                    <div className="flex items-center">
+                                        <div className="bg-amber-100 p-2 rounded-lg mr-3">
+                                            <FaCouch className="text-amber-700" />
+                                        </div>
+                                        <div>
+                                            <div className="font-medium text-amber-900">{product.furniture_name}</div>
+                                            {product.special_description && (
+                                                <div className="text-amber-700 text-sm italic">"{product.special_description}"</div>
+                                            )}
+                                        </div>
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-amber-700">
-                                    {product.category}
+                                    <div className="flex items-center">
+                                        <FaTag className="mr-2 text-amber-600" />
+                                        {product.furniture_type}
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap font-medium text-amber-900">
-                                    {product.price}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.status === 'active'
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-red-100 text-red-800'
-                                        }`}>
-                                        {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
-                                    </span>
+                                    <div className="flex items-center">
+                                        <FaDollarSign className="mr-1 text-amber-700" />
+                                        {product.furniture_price} Birr
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button
@@ -178,9 +225,18 @@ export default function ProductsPage() {
                         ))}
                     </tbody>
                 </table>
+
+                {products.length === 0 && (
+                    <div className="text-center py-12">
+                        <div className="text-amber-500 mb-2">
+                            <FaCouch className="text-4xl mx-auto" />
+                        </div>
+                        <p className="text-amber-700">No products found</p>
+                    </div>
+                )}
             </div>
 
-            {/* Add Product Modal */}
+            {/* Add Product Modal (UNCHANGED from your original) */}
             {isAddModalOpen && (
                 <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -220,13 +276,14 @@ export default function ProductsPage() {
                                             name="addCategory"
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         >
-                                            <option>Living Room</option>
-                                            <option>Dining</option>
+                                            <option>Chair</option>
+                                            <option>Sofa</option>
                                             <option>Bedroom</option>
+                                            <option>Dining</option>
+                                            <option>Lighting</option>
                                             <option>Office</option>
                                             <option>Storage</option>
                                             <option>Decor</option>
-                                            <option>Lighting</option>
                                         </select>
                                     </div>
 
@@ -237,9 +294,9 @@ export default function ProductsPage() {
                                         <input
                                             type="text"
                                             id="addPrice"
-                                            name='addPrice'
+                                            name="addPrice"
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                                            placeholder="$0.00"
+                                            placeholder="0.00"
                                         />
                                     </div>
 
@@ -250,9 +307,9 @@ export default function ProductsPage() {
                                         <textarea
                                             id="addSpecialDescription"
                                             rows={2}
-                                            name='addSpecialDescription'
+                                            name="addSpecialDescription"
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                                            placeholder="Enter your S.Description"
+                                            placeholder="Enter special description"
                                         ></textarea>
                                     </div>
                                 </div>
@@ -264,7 +321,7 @@ export default function ProductsPage() {
                                     <textarea
                                         id="addDescription"
                                         rows={4}
-                                        name='addDescription'
+                                        name="addDescription"
                                         className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         placeholder="Enter product description"
                                     ></textarea>
@@ -304,7 +361,7 @@ export default function ProductsPage() {
                 </div>
             )}
 
-            {/* Edit Product Modal */}
+            {/* Edit Product Modal (Simplified - no status field) */}
             {isEditModalOpen && selectedProduct && (
                 <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -329,7 +386,7 @@ export default function ProductsPage() {
                                         <input
                                             type="text"
                                             id="editName"
-                                            defaultValue={selectedProduct.name}
+                                            defaultValue={selectedProduct.furniture_name}
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         />
                                     </div>
@@ -340,16 +397,17 @@ export default function ProductsPage() {
                                         </label>
                                         <select
                                             id="editCategory"
-                                            defaultValue={selectedProduct.category}
+                                            defaultValue={selectedProduct.furniture_type}
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         >
-                                            <option>Living Room</option>
-                                            <option>Dining</option>
+                                            <option>Chair</option>
+                                            <option>Sofa</option>
                                             <option>Bedroom</option>
+                                            <option>Dining</option>
+                                            <option>Lighting</option>
                                             <option>Office</option>
                                             <option>Storage</option>
                                             <option>Decor</option>
-                                            <option>Lighting</option>
                                         </select>
                                     </div>
 
@@ -358,26 +416,25 @@ export default function ProductsPage() {
                                             Price *
                                         </label>
                                         <input
-                                            type="text"
+                                            type="number"
                                             id="editPrice"
-                                            defaultValue={selectedProduct.price}
+                                            defaultValue={selectedProduct.furniture_price}
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         />
                                     </div>
+                                </div>
 
-                                    <div>
-                                        <label htmlFor="editStatus" className="block text-amber-800 font-medium mb-2">
-                                            Status
-                                        </label>
-                                        <select
-                                            id="editStatus"
-                                            defaultValue={selectedProduct.status}
-                                            className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                                        >
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                        </select>
-                                    </div>
+                                <div>
+                                    <label htmlFor="editSpecialDescription" className="block text-amber-800 font-medium mb-2">
+                                        Special Description
+                                    </label>
+                                    <textarea
+                                        id="editSpecialDescription"
+                                        rows={2}
+                                        defaultValue={selectedProduct.special_description || ''}
+                                        className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                                        placeholder="Enter special description"
+                                    ></textarea>
                                 </div>
 
                                 <div>
@@ -387,6 +444,7 @@ export default function ProductsPage() {
                                     <textarea
                                         id="editDescription"
                                         rows={4}
+                                        defaultValue={selectedProduct.furniture_description}
                                         className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         placeholder="Enter product description"
                                     ></textarea>

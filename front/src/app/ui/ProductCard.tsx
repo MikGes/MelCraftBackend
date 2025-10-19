@@ -36,7 +36,7 @@ export default function ProductCard({ product, isInterior = false, onViewDetails
             </p>
           </div>
           <span className="font-bold text-amber-800">
-            {isInterior ? product.price : product.furniture_price}
+            {isInterior ? product.price : product.furniture_price} Birr
           </span>
         </div>
         <button

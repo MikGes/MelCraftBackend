@@ -53,4 +53,4 @@ export const UsersSchema = new mongoose.Schema({
         type: String,
         default: "customer"
     }
-})
+}, { timestamps: true })
