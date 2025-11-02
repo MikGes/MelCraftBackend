@@ -17,10 +17,10 @@ export class AdminController {
     async CreateFurniture(@Res() res: Response, @Body() FurDetails) {
         await this.adminService.createFurniture(res, FurDetails)
     }
-    @Get('users')
-    async getAllUsers(@Res() res: Response) {
-        await this.adminService.getAllUsers(res)
-    }
+    // @Get('users')
+    // async getAllUsers(@Res() res: Response) {
+    //     await this.adminService.getAllUsers(res)
+    // }
     @Post("createAdmin")
     async createAdmin(@Res() res, @Body() adminDetails) {
         await this.adminService.CreateAdmin(res, adminDetails)

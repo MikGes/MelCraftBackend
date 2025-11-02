@@ -1,5 +1,3 @@
-// components/ui/ProductCard.tsx
-import { FaArrowRight } from 'react-icons/fa';
 
 interface ProductCardProps {
   product: any; // You can refine this type later

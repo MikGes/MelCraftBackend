@@ -111,11 +111,14 @@ export default function ProductModal({
           <h2 className="text-2xl font-bold text-amber-900">{product.furniture_name || product.name}</h2>
           <button
             onClick={onClose}
-            className="text-amber-700 hover:text-amber-900"
+            className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white bg-opacity-80 text-gray-600 hover:bg-amber-100 hover:text-amber-700 shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400"
             aria-label="Close modal"
           >
-            <FaTimes className="text-2xl" />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
+
         </div>
         <div className="p-6">
           <div className="flex flex-col md:flex-row gap-8">

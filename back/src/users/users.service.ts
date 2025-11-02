@@ -43,15 +43,12 @@ export class UserService {
     async VerifyEmail(res, verificationToken) {
         try {
             const target = await this.usersTable.findOne({ verification_token: verificationToken });
-            console.log(target)
-            console.log(verificationToken)
             if (target) {
                 target.email_verified = true;
                 target.verification_token = ""
                 await target.save();
                 return res.status(200).json({
                     message: "Your Email Is Verified Successfully! You may now request products!",
-                    success: true
                 })
             }
             return res.status(400).json({

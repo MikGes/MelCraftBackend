@@ -12,9 +12,38 @@ interface Product {
     furniture_price: number;
     furniture_description: string;
     special_description?: string;
+    furniture_image?: string;
 }
 
 export default function ProductsPage() {
+    // Add these to your component state
+    const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+    const [imageUrlError, setImageUrlError] = useState('');
+    const [editedImagePreviewUrl, setEditedImagePreviewUrl] = useState("")
+    // Validation function
+    const isValidImageUrl = (url: any) => {
+        try {
+            const urlObj = new URL(url);
+            // Check if it's a valid image URL (common extensions)
+            return /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(urlObj.pathname);
+        } catch {
+            return false;
+        }
+    };
+
+    // Update validation on every change
+    useEffect(() => {
+        if (!imagePreviewUrl) {
+            setImageUrlError('');
+            return;
+        }
+
+        if (!isValidImageUrl(imagePreviewUrl)) {
+            setImageUrlError('Please enter a valid image URL (jpg, png, gif, webp, or svg)');
+        } else {
+            setImageUrlError('');
+        }
+    }, [imagePreviewUrl]);
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -53,9 +82,9 @@ export default function ProductsPage() {
         const price = formData.get('addPrice');
         const specialDescription = formData.get('addSpecialDescription');
         const description = formData.get('addDescription');
-
+        const imageUrl = formData.get('addImageUrl')
         // Basic validation
-        if (!name || !category || !price) {
+        if (!name || !category || !price || !imageUrl) {
             alert('Please fill in all required fields.');
             return;
         }
@@ -68,6 +97,7 @@ export default function ProductsPage() {
         }
 
         const payload = {
+            furniture_image: imageUrl,
             furniture_name: name,
             furniture_type: category,
             furniture_price: cleanPrice,
@@ -328,16 +358,41 @@ export default function ProductsPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-amber-800 font-medium mb-2">
-                                        Product Images
+                                    <label htmlFor="addImageUrl" className="block text-amber-800 font-medium mb-2">
+                                        Image URL *
                                     </label>
-                                    <div className="border-2 border-dashed border-amber-300 rounded-lg p-6 text-center">
-                                        <p className="text-amber-600">Drag and drop images here or click to browse</p>
-                                        <button className="mt-2 text-amber-700 hover:text-amber-900 font-medium">
-                                            Select Files
-                                        </button>
-                                    </div>
+                                    <input
+                                        type="url"
+                                        id="addImageUrl"
+                                        name="addImageUrl"
+                                        value={imagePreviewUrl}
+                                        onChange={(e) => setImagePreviewUrl(e.target.value)}
+                                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${imageUrlError
+                                            ? 'border-red-400 focus:ring-red-500'
+                                            : 'border-amber-300 focus:ring-amber-500'
+                                            }`}
+                                        placeholder="https://example.com/image.jpg"
+                                    />
+                                    {imageUrlError && (
+                                        <p className="mt-1 text-sm text-red-600">{imageUrlError}</p>
+                                    )}
                                 </div>
+
+                                {/* === IMAGE PREVIEW === */}
+                                {imagePreviewUrl && !imageUrlError && (
+                                    <div className="mt-2">
+                                        <p className="text-amber-800 font-medium mb-2">Preview:</p>
+                                        <div className="flex justify-center">
+                                            <img
+                                                src={imagePreviewUrl}
+                                                alt="Product preview"
+                                                className="max-h-64 w-auto object-contain border border-amber-200 rounded-lg shadow-sm"
+                                                onError={() => setImagePreviewUrl('')} // Clear on error
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
 
                                 <div className="flex justify-end space-x-4 pt-4">
                                     <button
@@ -452,18 +507,43 @@ export default function ProductsPage() {
 
                                 <div>
                                     <label className="block text-amber-800 font-medium mb-2">
-                                        Product Images
+                                        Product Image
                                     </label>
-                                    <div className="flex space-x-4">
-                                        {[1, 2, 3].map((i) => (
-                                            <div key={i} className="bg-amber-200 border-2 border-amber-300 rounded-lg w-24 h-24 flex items-center justify-center">
-                                                <span className="text-amber-800 font-bold text-sm">Img {i}</span>
+                                    <div>
+                                        <label htmlFor="addImageUrl" className="block text-amber-800 font-medium mb-2">
+                                            Image URL *
+                                        </label>
+                                        <input
+                                            type="url"
+                                            id="addImageUrl"
+                                            name="addImageUrl"
+                                            value={editedImagePreviewUrl}
+                                            onChange={(e) => setEditedImagePreviewUrl(e.target.value)}
+                                            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${imageUrlError
+                                                ? 'border-red-400 focus:ring-red-500'
+                                                : 'border-amber-300 focus:ring-amber-500'
+                                                }`}
+                                            placeholder="https://example.com/image.jpg"
+                                        />
+                                        {imageUrlError && (
+                                            <p className="mt-1 text-sm text-red-600">{imageUrlError}</p>
+                                        )}
+
+                                        {/* Live Image Preview */}
+                                        {editedImagePreviewUrl && (
+                                            <div className="mt-4">
+                                                <img
+                                                    src={editedImagePreviewUrl}
+                                                    alt="Live preview"
+                                                    className="w-64 h-64 object-cover rounded-lg"
+                                                    onError={() => setImageUrlError('Invalid image URL')}
+                                                    onLoad={() => setImageUrlError('')}
+                                                />
                                             </div>
-                                        ))}
-                                        <div className="bg-amber-100 border-2 border-dashed border-amber-300 rounded-lg w-24 h-24 flex items-center justify-center">
-                                            <FaPlus className="text-amber-700" />
-                                        </div>
+                                        )}
                                     </div>
+
+
                                 </div>
 
                                 {/* Danger Zone */}

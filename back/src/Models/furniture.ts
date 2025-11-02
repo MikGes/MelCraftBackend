@@ -21,11 +21,6 @@ export const FurnitureSchema = new mongoose.Schema({
         type: String
     },
     furniture_image: {
-        type: Buffer,
-        required: false,
-        contentType: {
-            type: String,  
-            required: true
-        }
+        type: String,
     }
 })

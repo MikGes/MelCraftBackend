@@ -2,17 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt'
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AdminService {
-    constructor(private jwtService: JwtService, @InjectModel("requests") private readonly RequestsTable, @InjectModel("furniture") private readonly FurnitureTable, @InjectModel("users") private readonly UsersTable, @InjectModel("admins") private readonly AdminsTable) { }
+    constructor(private jwtService: JwtService, private mailService: MailService, @InjectModel("requests") private readonly RequestsTable, @InjectModel("furniture") private readonly FurnitureTable, @InjectModel("users") private readonly UsersTable, @InjectModel("admins") private readonly AdminsTable) { }
     async createFurniture(res, furDetails) {
         try {
             await this.FurnitureTable.create(furDetails)
-            res.status(200).json({
+            const verifiedEmails = await this.getAllUsers()
+            await this.mailService.sendMailToUsers(verifiedEmails, furDetails.furniture_type)
+            return res.status(200).json({
                 message: "Furniture created successfully",
                 success: true
             })
+
         } catch (error) {
             res.status(500).json({
                 message: "Cant't create furniture",
@@ -21,19 +25,14 @@ export class AdminService {
             })
         }
     }
-    async getAllUsers(res) {
+    async getAllUsers() {
         try {
-            const users = await this.UsersTable.find().populate("orders.ordered_furniture_id")
-            return res.status(200).json({
-                data: users,
-                success: true,
-            })
+            const users = await this.UsersTable.find({ email_verified: true })
+                .populate("orders.ordered_furniture_id");
+            const verifiedEmails = users.map(user => user.email);
+            return verifiedEmails
         } catch (error) {
-            return res.status(500).json({
-                message: "Can't fetch users",
-                success: false,
-                error: error.message
-            })
+            return null
         }
     }
     async CreateAdmin(res, userDetail) {

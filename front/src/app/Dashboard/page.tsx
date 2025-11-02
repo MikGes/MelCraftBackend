@@ -22,7 +22,7 @@ export default function DashboardPage() {
     ];
 
     return (
-        <div className="p-6">
+        <div className="p-6 bg">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-amber-900">Dashboard</h1>
                 <p className="text-amber-700 mt-2">Welcome back! Here's what's happening with your store.</p>
