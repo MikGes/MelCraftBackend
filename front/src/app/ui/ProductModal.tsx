@@ -124,20 +124,13 @@ export default function ProductModal({
           <div className="flex flex-col md:flex-row gap-8">
             {/* Product Image */}
             <div className="md:w-1/2">
-              <div className="bg-amber-200 border-2 border-amber-300 rounded-xl w-full h-80 flex items-center justify-center">
-                <div className="bg-amber-300 w-48 h-48 rounded-lg flex items-center justify-center">
-                  <span className="text-amber-800 font-bold text-2xl">
-                    {(product.furniture_name || product.name).split(' ')[0]}
-                  </span>
-                </div>
-              </div>
-              <div className="mt-4 flex space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="bg-amber-200 border-2 border-amber-300 rounded-lg w-16 h-16 flex items-center justify-center">
-                    <span className="text-amber-800 font-bold text-sm">Img {i}</span>
-                  </div>
-                ))}
-              </div>
+            <div className="flex items-center justify-center bg-slate-100 border-1 border-amber-100 rounded-xl w-full h-80">
+  <img 
+    src={product.furniture_image} 
+    alt="Furniture" 
+    className="object-contain h-full"
+  />
+</div>
             </div>
 
             {/* Product Details */}
@@ -212,7 +205,7 @@ export default function ProductModal({
                         onChange={onInputChange}
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${formErrors.phone ? 'border-red-500' : 'border-amber-300'
                           }`}
-                        placeholder="+44 1234 567890"
+                        placeholder="0912345678"
                       />
                       {formErrors.phone && (
                         <p className="mt-1 text-red-500 text-sm">{formErrors.phone}</p>

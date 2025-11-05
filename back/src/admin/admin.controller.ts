@@ -5,9 +5,9 @@ import { Response } from 'express';
 @Controller('admin')
 export class AdminController {
     constructor(private readonly adminService: AdminService) { }
-    @Get()
-    async getAllusers() {
-
+    @Get("users")
+    async getAllusers(@Res() res:Response) {
+       await this.adminService.getAllusers(res)
     }
     @Post("createUser")
     async CreateUser(@Res() res: Response, @Body() userDetail: any) {
@@ -32,5 +32,9 @@ export class AdminController {
     @Get("getrequests")
     async GetRequests(@Res() res: Response) {
         await this.adminService.getAllRequests(res)
+    }
+    @Get("/getRecentActivities")
+    async GetRecentActivities(@Res() res:Response){
+        await this.adminService.getRecentActivities(res)
     }
 }

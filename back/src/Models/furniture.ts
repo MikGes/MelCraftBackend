@@ -23,4 +23,6 @@ export const FurnitureSchema = new mongoose.Schema({
     furniture_image: {
         type: String,
     }
-})
+},
+{ timestamps: true }
+)

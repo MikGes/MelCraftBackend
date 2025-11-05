@@ -46,6 +46,10 @@ export const UsersSchema = new mongoose.Schema({
             }
         }
     ],
+    //this is a lame idea we wil change it throught time, with God
+    orderedProducts:{
+        type:Number,
+    },
     verification_token: {
         type: String,
     },

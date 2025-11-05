@@ -162,10 +162,12 @@ export default function HomePage() {
           onViewProducts={() => scrollToSection('products')}
           onContactClick={() => scrollToSection('contact')}
         />
-
+ <div className="py-8 bg-yellow-100">
+          <NewsletterSection />
+        </div>
         <div>
           {/* Category Cards */}
-          <div className="py-8 px-4">
+          <div id="products" className="py-8 px-4">
             <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Shop by Category</h2>
 
             {/* 3-column responsive grid */}
@@ -247,7 +249,7 @@ export default function HomePage() {
                   </h2>
                 </div>
 
-                {/* Modal Body */}
+             
                 <div className="p-6 overflow-y-auto max-h-[70vh]">
                   <ProductsSection
                     furnitures={categorizedFurniture[selectedCategory]}
@@ -262,7 +264,7 @@ export default function HomePage() {
         <ServicesSection />
         <AboutSection />
         <ContactSection />
-        <div className="py-8 bg-white">
+        <div className="py-8 bg-yellow-100">
           <NewsletterSection />
         </div>
       </main>

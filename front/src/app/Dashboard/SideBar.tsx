@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaHome, FaBox, FaClipboardList, FaUsers, FaSignOutAlt } from 'react-icons/fa';
@@ -9,7 +8,7 @@ interface NavItem {
     id: string;
     name: string;
     href: string;
-    icon: any;
+    icon: React.ReactNode;
 }
 
 const navItems: NavItem[] = [
@@ -21,13 +20,11 @@ const navItems: NavItem[] = [
 
 export default function Sidebar() {
     const pathname = usePathname();
-    const [activeItem, setActiveItem] = useState('dashboard');
 
-    // Update active item based on current route
-    useEffect(() => {
-        const currentItem = navItems.find(item => pathname?.startsWith(item.href)) || navItems[0];
-        setActiveItem(currentItem.id);
-    }, [pathname]);
+    // Helper: check if current path matches a nav item (supports nested routes)
+    const isActive = (href: string): boolean => {
+        return  pathname === href;
+    };
 
     return (
         <div className="fixed left-0 top-0 h-full w-64 bg-amber-900 text-white shadow-xl z-40">
@@ -45,21 +42,24 @@ export default function Sidebar() {
                 {/* Navigation */}
                 <nav className="flex-1 px-4 py-6">
                     <ul className="space-y-2">
-                        {navItems.map((item) => (
-                            <li key={item.id}>
-                                <Link
-                                    href={item.href}
-                                    className={`flex items-center w-full p-3 rounded-lg transition duration-200 ${activeItem === item.id
-                                        ? 'bg-amber-800 text-white shadow-inner'
-                                        : 'text-amber-200 hover:bg-amber-800 hover:text-white'
+                        {navItems.map((item) => {
+                            const active = isActive(item.href);
+                            return (
+                                <li key={item.id}>
+                                    <Link
+                                        href={item.href}
+                                        className={`flex items-center w-full p-3 rounded-lg transition duration-200 ${
+                                            active
+                                                ? 'bg-amber-800 text-white shadow-inner'
+                                                : 'text-amber-200 hover:bg-amber-800 hover:text-white'
                                         }`}
-                                    onClick={() => setActiveItem(item.id)}
-                                >
-                                    <span className="mr-3">{item.icon}</span>
-                                    <span className="font-medium">{item.name}</span>
-                                </Link>
-                            </li>
-                        ))}
+                                    >
+                                        <span className="mr-3">{item.icon}</span>
+                                        <span className="font-medium">{item.name}</span>
+                                    </Link>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </nav>
 
