@@ -1,5 +1,5 @@
 // components/sections/ContactSection.tsx
-import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaTiktok, FaClock, FaLightbulb } from 'react-icons/fa';
 
 export default function ContactSection() {
   return (
@@ -11,22 +11,27 @@ export default function ContactSection() {
             Ready to transform your space? Contact our design team for a personalized consultation.
           </p>
         </div>
+
         <div className="flex flex-col md:flex-row gap-12">
+          {/* Left Column: Contact Info */}
           <div className="md:w-1/2">
-            <div className="bg-amber-800 p-8 rounded-xl">
+            <div className="bg-amber-800 p-8 rounded-xl h-full">
               <h3 className="text-xl font-bold text-white mb-6">Contact Information</h3>
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="bg-amber-700 p-3 rounded-lg mr-4">
+                  <div className="bg-amber-700 p-3 rounded-lg mr-4 flex-shrink-0">
                     <FaMapMarkerAlt className="text-white text-xl" />
                   </div>
                   <div>
                     <h4 className="font-bold text-white">Our Location</h4>
-                    <p className="text-amber-200">123 Design Avenue, Creative District<br />London, UK</p>
+                    <p className="text-amber-200">
+                      123 Design Avenue, Creative District<br />
+                      London, UK
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="bg-amber-700 p-3 rounded-lg mr-4">
+                  <div className="bg-amber-700 p-3 rounded-lg mr-4 flex-shrink-0">
                     <FaPhone className="text-white text-xl" />
                   </div>
                   <div>
@@ -35,7 +40,7 @@ export default function ContactSection() {
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="bg-amber-700 p-3 rounded-lg mr-4">
+                  <div className="bg-amber-700 p-3 rounded-lg mr-4 flex-shrink-0">
                     <FaEnvelope className="text-white text-xl" />
                   </div>
                   <div>
@@ -43,68 +48,59 @@ export default function ContactSection() {
                     <p className="text-amber-200">hello@melcraft.design</p>
                   </div>
                 </div>
+                <div className="flex items-start">
+                  <div className="bg-amber-700 p-3 rounded-lg mr-4 flex-shrink-0">
+                    <FaTiktok className="text-white text-xl" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white">TikTok</h4>
+                    <p className="text-amber-200">@melcraft.design</p>
+                  </div>
+                </div>
               </div>
-              <div className="mt-8">
+
+              <div className="mt-8 pt-6 border-t border-amber-700">
                 <h4 className="font-bold text-white mb-4">Opening Hours</h4>
                 <div className="text-amber-200 space-y-1">
-                  <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                  <p>Saturday: 10:00 AM - 4:00 PM</p>
+                  <p>Monday – Friday: 9:00 AM – 6:00 PM</p>
+                  <p>Saturday: 10:00 AM – 4:00 PM</p>
                   <p>Sunday: Closed</p>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Right Column: Helpful Notes / Tips */}
           <div className="md:w-1/2">
-            <div className="bg-white p-8 rounded-xl">
-              <h3 className="text-xl font-bold text-amber-900 mb-6">Send us a Message</h3>
-              <form className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-amber-800 font-medium mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                    placeholder="Your name"
-                  />
+            <div className="bg-amber-800 p-8 rounded-xl h-full flex flex-col">
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center">
+                <FaLightbulb className="mr-2 text-amber-400" />
+                Before You Reach Out
+              </h3>
+              <div className="text-amber-200 space-y-4 flex-grow">
+                <p>
+                  To help us serve you better, here’s what we recommend including in your first message:
+                </p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>Project scope or goals (e.g., brand refresh, full website)</li>
+                  <li>Preferred timeline or launch date</li>
+                  <li>Any visual references or inspiration</li>
+                  <li>Budget range (optional but helpful)</li>
+                </ul>
+
+                <div className="mt-6 p-4 bg-amber-900/50 rounded-lg border border-amber-700">
+                  <h5 className="font-bold text-white flex items-center">
+                    <FaClock className="mr-2" /> Quick Response Promise
+                  </h5>
+                  <p className="mt-2 text-sm">
+                    We aim to reply within <strong>1 business day</strong>
+                  </p>
                 </div>
-                <div>
-                  <label htmlFor="email" className="block text-amber-800 font-medium mb-2">Email Address</label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="service" className="block text-amber-800 font-medium mb-2">Service Interested In</label>
-                  <select
-                    id="service"
-                    className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                  >
-                    <option>Furniture Design</option>
-                    <option>Interior Design</option>
-                    <option>Full Renovation</option>
-                    <option>Space Planning</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-amber-800 font-medium mb-2">Message</label>
-                  <textarea
-                    id="message"
-                    rows={4}
-                    className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                    placeholder="Tell us about your project..."
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-amber-700 hover:bg-amber-800 text-white py-3 rounded-lg font-medium transition duration-300"
-                >
-                  Send Message
-                </button>
-              </form>
+              </div>
+
+              <div className="mt-6 pt-4 text-sm italic text-amber-300 border-t border-amber-700">
+                🌟 <strong>Fun Fact:</strong> Over 80% of our clients begin with a 30-minute discovery call—no obligation, just great conversation and clarity.
+              </div>
             </div>
           </div>
         </div>

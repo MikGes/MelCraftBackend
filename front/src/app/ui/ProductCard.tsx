@@ -8,8 +8,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, isInterior = false, onViewDetails }: ProductCardProps) {
   return (
     <div
-      className={`rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 ${isInterior ? 'bg-amber-50' : 'bg-gradient-to-r from-amber-100 to-amber-300'
-        }`}
+      className={`rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 bg-gradient-to-r from-amber-100 to-amber-300`}
     >
       {!isInterior && product.special_description && (
         <p className="bg-green-500 text-white text-center font-semibold py-2 animate-marquee">
@@ -19,7 +18,7 @@ export default function ProductCard({ product, isInterior = false, onViewDetails
       <div className="h-48 bg-amber-200 flex items-center justify-center">
         <div className="bg-amber-300 w-32 h-32 rounded-lg flex items-center justify-center">
           <span className="text-amber-800 font-bold text-lg">
-            {(isInterior ? product.name : product.furniture_name).split(' ')[0]}
+            {(product.furniture_name).split(' ')[0]}
           </span>
         </div>
       </div>
@@ -34,7 +33,7 @@ export default function ProductCard({ product, isInterior = false, onViewDetails
             </p>
           </div>
           <span className="font-bold text-amber-800">
-            {isInterior ? product.price : product.furniture_price} Birr
+            {product.furniture_price} Birr
           </span>
         </div>
         <button

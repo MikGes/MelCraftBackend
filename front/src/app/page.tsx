@@ -162,20 +162,20 @@ export default function HomePage() {
           onViewProducts={() => scrollToSection('products')}
           onContactClick={() => scrollToSection('contact')}
         />
- <div className="py-8 bg-yellow-100">
+        <div className="py-8 bg-yellow-100">
           <NewsletterSection />
         </div>
         <div>
           {/* Category Cards */}
-          <div id="products" className="py-8 px-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Shop by Category</h2>
+          <div id="products" className="py-8 px-4 bg-amber-900">
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">Shop by Category</h2>
 
             {/* 3-column responsive grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {Object.keys(categorizedFurniture).map((category) => {
                 // Optional: Get first product image as category thumbnail
                 const sampleItem = categorizedFurniture[category][0];
-                const imageUrl = sampleItem?.image || '/placeholder-furniture.jpg'; // fallback image
+                const imageUrl = sampleItem?.furniture_image || '/placeholder-furniture.jpg'; // fallback image
 
                 return (
                   <button
@@ -249,7 +249,7 @@ export default function HomePage() {
                   </h2>
                 </div>
 
-             
+
                 <div className="p-6 overflow-y-auto max-h-[70vh]">
                   <ProductsSection
                     furnitures={categorizedFurniture[selectedCategory]}

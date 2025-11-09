@@ -306,14 +306,13 @@ export default function ProductsPage() {
                                             name="addCategory"
                                             className="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                         >
-                                            <option>Chair</option>
                                             <option>Sofa</option>
-                                            <option>Bedroom</option>
-                                            <option>Dining</option>
-                                            <option>Lighting</option>
-                                            <option>Office</option>
-                                            <option>Storage</option>
-                                            <option>Decor</option>
+                                            <option>Bed</option>
+                                            <option>Book_Shelf</option>
+                                            <option>Shoe_Rack</option>
+                                            <option>Floating_Shelf</option>
+                                            <option>Wardrobe</option>
+                                            <option>Kitchen_Cabinet</option>
                                         </select>
                                     </div>
 

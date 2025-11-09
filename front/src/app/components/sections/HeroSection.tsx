@@ -1,6 +1,7 @@
 // components/sections/HeroSection.tsx
 import { FaArrowRight } from 'react-icons/fa';
-
+import HeroLogo from "../../../../public/HeroLogo.png"
+import Image from 'next/image';
 interface HeroSectionProps {
   onViewProducts: () => void;
   onContactClick: () => void;
@@ -8,7 +9,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onViewProducts, onContactClick }: HeroSectionProps) {
   return (
-    <section id="home" className="pt-32 pb-20 md:pt-40 md:pb-28 bg-gradient-to-r from-amber-100 to-amber-50">
+    <section id="home" className="pt-32 pb-20 md:pt-14 md:pb-28 bg-gradient-to-r from-amber-100 to-amber-50">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-10 md:mb-0">
@@ -33,19 +34,10 @@ export default function HeroSection({ onViewProducts, onContactClick }: HeroSect
               </button>
             </div>
           </div>
-          <div className="md:w-1/2 flex justify-center">
-            <div className="relative">
-              <div className="bg-amber-200 border-4 border-amber-300 rounded-2xl w-80 h-80 md:w-96 md:h-96 flex items-center justify-center">
-                <div className="bg-amber-300 w-64 h-64 md:w-80 md:h-80 rounded-xl flex items-center justify-center">
-                  <div className="bg-amber-100 w-48 h-48 md:w-64 md:h-64 rounded-lg flex items-center justify-center">
-                    <span className="text-amber-800 font-bold text-2xl md:text-4xl">Melcraft</span>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -bottom-6 -right-6 bg-amber-700 text-white py-2 px-6 rounded-lg shadow-lg">
-                <span className="font-bold">Since 1998</span>
-              </div>
-            </div>
+
+          <div className="md:w-1/2 flex justify-center relative">
+            <Image src={HeroLogo} alt="Hero Logo" className="relative" />
+
           </div>
         </div>
       </div>

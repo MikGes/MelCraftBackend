@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {  FaLock, FaUser } from 'react-icons/fa';
+import { FaLock, FaUser } from 'react-icons/fa';
+import Logo from '../../../public/Logo.png'
+import Image from 'next/image';
 
 interface FormErrors {
     username?: string;
@@ -47,13 +49,13 @@ export default function LoginPage() {
                 body: JSON.stringify({ username, password })
             })
             const resultJson = await result.json()
-            if (resultJson.success){
+            if (resultJson.success) {
                 localStorage.setItem(
-                    "accessToken",resultJson.access_token
+                    "accessToken", resultJson.access_token
                 )
                 router.push("/Dashboard")
             }
-            else{
+            else {
                 setErrors({ ...errors, username: 'Invalid credentials' });
             }
         } catch (error) {
@@ -65,13 +67,12 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-amber-50 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-amber-100 p-4">
             <div className="w-full max-w-md">
                 {/* Circular Logo Placeholder */}
                 <div className="flex justify-center mb-8">
-                    <div className="bg-amber-200 border-2 border-amber-300 rounded-full w-24 h-24 flex items-center justify-center">
-                        <span className="text-amber-800 font-bold text-xl">LOGO</span>
-                    </div>
+                    <Image src={Logo} className="position:relative" alt='Logo' width={300} />
+
                 </div>
 
                 {/* Login Card */}

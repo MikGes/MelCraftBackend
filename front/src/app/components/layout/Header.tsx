@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FaArrowRight } from 'react-icons/fa';
-
+import Logo from '../../../../public/Logo.png'
+import Image from 'next/image';
 interface HeaderProps {
   activeSection: string;
   isMenuOpen: boolean;
@@ -13,15 +14,12 @@ interface HeaderProps {
 
 export default function Header({ activeSection, isMenuOpen, setIsMenuOpen, scrollToSection }: HeaderProps) {
   return (
-    <header className="fixed w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm">
+    <header className="fixed w-full backdrop-blur-sm z-50 shadow-sm">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <div className="bg-amber-700 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl">
-              M
-            </div>
-            <span className="ml-2 text-amber-900 font-bold text-xl">Melcraft</span>
+            <Image src={Logo} className="position:relative" alt='Logo' width={300} />
           </Link>
 
           {/* Desktop Navigation */}

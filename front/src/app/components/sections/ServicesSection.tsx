@@ -6,7 +6,7 @@ import { FaLightbulb as FaIdeal } from 'react-icons/fa';
 
 export default function ServicesSection() {
   const services = [
-    { icon: <FaHome />, title: 'Residential Design', desc: 'Transform your home into a sanctuary of comfort and style with our bespoke residential design services.' },
+    { icon: <FaHome />, title: 'Architectural Design', desc: 'Transform your home into a sanctuary of comfort and style with our bespoke architectural design services.' },
     { icon: <FaChair />, title: 'Custom Furniture', desc: 'Commission unique, handcrafted furniture pieces designed exclusively for your space and needs.' },
     { icon: <FaPaintBrush />, title: 'Full Renovation', desc: 'Complete interior renovation services from concept to completion with our expert design team.' },
     { icon: <FaBed />, title: 'Space Planning', desc: 'Optimize your space with intelligent layouts that maximize functionality and aesthetic appeal.' },
