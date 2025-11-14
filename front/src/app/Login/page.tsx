@@ -46,13 +46,14 @@ export default function LoginPage() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({ username, password })
             })
             const resultJson = await result.json()
             if (resultJson.success) {
-                localStorage.setItem(
-                    "accessToken", resultJson.access_token
-                )
+                // localStorage.setItem(
+                //     "accessToken", resultJson.access_token
+                // )
                 router.push("/Dashboard")
             }
             else {

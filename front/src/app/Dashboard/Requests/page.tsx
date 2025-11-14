@@ -37,7 +37,10 @@ export default function RequestsPage() {
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const response = await fetch('http://localhost:4000/admin/getrequests'); // Adjust to your endpoint
+                const response = await fetch('http://localhost:4000/admin/getrequests',{
+                  credentials: 'include',
+
+                }); // Adjust to your endpoint
                 if (!response.ok) throw new Error('Failed to fetch requests');
                 const data = await response.json();
                 console.log(data)

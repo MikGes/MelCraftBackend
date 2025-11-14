@@ -1,5 +1,6 @@
 "use client";
 
+import { createUser } from "@/app/actions/CreateUser";
 import { useState } from "react";
 
 export default function NewsletterSection() {
@@ -18,23 +19,16 @@ export default function NewsletterSection() {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:4000/users/createUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      
+      const res = await createUser(email)
 
-      const data = await res.json();
-
-      if (res.ok && data.success) {
+      if (res.success) {
         setStatus("success");
-        setMessage(data.message || "Thanks for subscribing! We've sent a confirmation email—please check your inbox and verify your address to complete your subscription.");
+        setMessage(res.message || "Thanks for subscribing! We've sent a confirmation email—please check your inbox and verify your address to complete your subscription.");
         setEmail("");
       } else {
         setStatus("error");
-        setMessage(data.message || "Something went wrong. Please try again.");
+        setMessage(res.message || "Something went wrong. Please try again.");
       }
     } catch (err) {
       console.error("Subscription failed:", err);

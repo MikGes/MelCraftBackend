@@ -71,8 +71,17 @@ export class AdminService {
                     sub: target._id,
                     role: target.role
                 }
+                const token = await this.jwtService.signAsync(payload, {
+                    expiresIn: '1d'
+                });
+                res.cookie('access_token', token, {
+                    httpOnly: true,       // Prevents JavaScript access (XSS protection)
+                    secure: true,         // Ensures cookie is sent over HTTPS
+                    sameSite: 'strict',   // CSRF protection
+                    maxAge: 24 * 60 * 60 * 1000
+                });
                 return res.status(200).json({
-                    access_token: await this.jwtService.signAsync(payload),
+                    access_token: token,
                     message: "Your authenticated!",
                     success: true
                 })
@@ -90,7 +99,7 @@ export class AdminService {
     }
     async getAllRequests(res) {
         try {
-            const furnitures = await this.RequestsTable.find() .sort({ createdAt: -1 }) 
+            const furnitures = await this.RequestsTable.find().sort({ createdAt: -1 })
                 .populate("orderedBy")
                 .populate("ordered_furniture");
 
@@ -105,74 +114,74 @@ export class AdminService {
             })
         }
     }
-    async getAllusers(res){
+    async getAllusers(res) {
         try {
             const users = await this.UsersTable.find()
             return res.status(200).json({
-                data:users,
-                success:true
+                data: users,
+                success: true
             })
         } catch (error) {
             return res.status(500).json({
-                message:"Can't load users",
-                success:false
+                message: "Can't load users",
+                success: false
             })
         }
     }
-     async getAllusersPlain(){
+    async getAllusersPlain() {
         try {
-            const users = await this.UsersTable.find().sort({createdAt:-1})
-            if (users.length != 0){
+            const users = await this.UsersTable.find().sort({ createdAt: -1 })
+            if (users.length != 0) {
                 return users[0]
             }
             else return []
         } catch (error) {
-           return null
+            return null
         }
     }
-     async getAllRequestsPlain() {
+    async getAllRequestsPlain() {
         try {
-            const furnitures = await this.RequestsTable.find() .sort({ createdAt: -1 }) 
+            const furnitures = await this.RequestsTable.find().sort({ createdAt: -1 })
                 .populate("orderedBy")
                 .populate("ordered_furniture");
-            if(furnitures.length !=0){
+            if (furnitures.length != 0) {
                 return furnitures[0]
             }
             else return []
         } catch (error) {
-           return null
+            return null
         }
     }
-     async GetFurnituresPlain() {
+    async GetFurnituresPlain() {
         try {
-            const products = await this.FurnitureTable.find().sort({createdAt:-1})
-           if(products.length != 0){
-            return products[0]
-           } 
+            const products = await this.FurnitureTable.find().sort({ createdAt: -1 })
+            if (products.length != 0) {
+                return products[0]
+            }
             else return []
         } catch (error) {
-           return null
+            return null
         }
     }
     async getRecentActivities(res) {
-    try {
-        const recentUser = await this.getAllusersPlain();
-        const recentRequest = await this.getAllRequestsPlain();
-        const recentProduct = await this.GetFurnituresPlain();
+        try {
+            const recentUser = await this.getAllusersPlain();
+            const recentRequest = await this.getAllRequestsPlain();
+            const recentProduct = await this.GetFurnituresPlain();
 
-        return res.status(200).json({
-            success: true,
-            data: {
-                recentUser: recentUser || null,
-                recentRequest: recentRequest || null,
-                recentProduct: recentProduct || null
-            }
-        });
-    } catch (error) {
-        return res.status(500).json( {
-            success: false,
-            error: 'Failed to fetch recent activities'
-        });
+            return res.status(200).json({
+                success: true,
+                data: {
+                    recentUser: recentUser || null,
+                    recentRequest: recentRequest || null,
+                    recentProduct: recentProduct || null
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to fetch recent activities'
+            });
+        }
     }
-}
 }

@@ -113,7 +113,7 @@ export default function Header({ activeSection, isMenuOpen, setIsMenuOpen, scrol
                 Contact
               </button>
               <Link
-                href="/login"
+                href="/Login"
                 className="bg-amber-700 text-white py-2 rounded-lg font-medium text-center"
                 onClick={() => setIsMenuOpen(false)}
               >

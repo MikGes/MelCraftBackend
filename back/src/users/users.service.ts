@@ -4,13 +4,23 @@ import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from 'bcrypt'
 import { MailService } from "src/mail/mail.service";
 import { v4 as uuid } from 'uuid';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UserService {
     constructor(private jwtService: JwtService, @InjectModel("furniture") private readonly furniture, @InjectModel("request") private readonly requests, @InjectModel('users') private readonly usersTable, private readonly mailService: MailService) { }
     async CreateUser(res, userDetail) {
         try {
-            const target = await this.usersTable.findOne({
+
+const payload = jwt.verify(userDetail.token, process.env.JWT_CLIENT_SECRET!);
+       if(!payload){
+        return res.status(401).json({
+                    message: "You are not authorized!",
+                    success: false
+                })
+       }     
+
+const target = await this.usersTable.findOne({
                 email: userDetail.email
             })
             if (target) {

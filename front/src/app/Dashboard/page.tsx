@@ -47,7 +47,9 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       // ✅ Replace with your actual endpoint
-      const res = await fetch('http://localhost:4000/admin/getRecentActivities');
+      const res = await fetch('http://localhost:4000/admin/getRecentActivities',{
+        credentials: 'include'
+      });
       if (!res.ok) throw new Error('Failed to fetch data');
       const result = await res.json();
       setActivities(result.data);

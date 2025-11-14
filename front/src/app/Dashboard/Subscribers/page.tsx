@@ -33,7 +33,10 @@ export default function SubscribersPage() {
         const fetchSubscribers = async () => {
             try {
                 // ✅ Replace with your actual endpoint URL
-                const res = await fetch('http://localhost:4000/admin/users'); // or your full URL if external
+                const res = await fetch('http://localhost:4000/admin/users',{
+                  credentials: 'include',
+
+                }); // or your full URL if external
                 if (!res.ok) throw new Error('Failed to fetch subscribers');
                 const data = await res.json();
 
